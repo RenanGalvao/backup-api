@@ -1,6 +1,6 @@
 {
   "name": "backup-api",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Backups database up",
   "author": "Renan Galvão",
   "private": true,
@@ -19,7 +19,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"    
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.13",
@@ -28,6 +28,7 @@
     "@nestjs/platform-express": "^7.6.13",
     "@nestjs/typeorm": "^7.1.5",
     "mysql2": "^2.2.5",
+    "mysqldump": "^3.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",
