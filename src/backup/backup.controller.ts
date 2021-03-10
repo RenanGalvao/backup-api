@@ -1,13 +1,11 @@
-import { Controller, Post, Body, Res, HttpStatus, UseFilters } from '@nestjs/common';
+import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import { BackupServiceV1 } from './backup.service';
 import { Response } from 'express';
 import { CreateDumpDto } from './dto/create-dump.dto';
 import { DumpResponse } from './interface/dump-response.interface';
-import { BackupExceptionFilter } from './backup-exception.filter';
 import { ValidationPipe } from '../validation.pipe';
 
 @Controller('api/v1')
-@UseFilters(BackupExceptionFilter)
 export class BackupControllerV1 {
   constructor(private readonly backupServiceV1: BackupServiceV1) {}
 
