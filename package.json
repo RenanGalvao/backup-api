@@ -1,6 +1,6 @@
 {
   "name": "backup-api",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Backups database up",
   "author": "Renan Galvão",
   "private": true,
@@ -27,6 +27,8 @@
     "@nestjs/core": "^7.6.13",
     "@nestjs/platform-express": "^7.6.13",
     "@nestjs/typeorm": "^7.1.5",
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
     "mysql2": "^2.2.5",
     "mysqldump": "^3.2.0",
     "reflect-metadata": "^0.1.13",
