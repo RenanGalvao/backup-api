@@ -1,3 +1,5 @@
+import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
+
 interface Body {
   message?: string;
   status?: number;
@@ -6,9 +8,16 @@ interface Body {
 }
 
 export class ResponseMessage {
+  @ApiProperty()
   message: string
+
+  @ApiHideProperty()
   status?: number
+
+  @ApiProperty()
   timestamp: number;
+
+  @ApiProperty()
   data: any
 
   constructor(body: Body) {
