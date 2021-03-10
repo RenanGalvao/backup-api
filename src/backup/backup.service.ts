@@ -19,7 +19,7 @@ export class BackupServiceV1 {
     });
     
     if(res){
-      this.logger.log(`Database ${body.database} saved in ./dump.`);
+      this.logger.log(`Database ${databaseWithTimestamp} saved in ./dump.`);
     }else{
       this.logger.log('Database doesn\'t exists. Aborting...');
     }
