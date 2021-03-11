@@ -4,7 +4,6 @@ import { DumpRequest } from './interface/dump-request.interface';
 import { ResponseMessage } from '../response-message';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Connection } from 'typeorm';
-import * as path from 'path';
 
 @Injectable()
 export class BackupServiceV1 {
@@ -20,7 +19,7 @@ export class BackupServiceV1 {
           password: process.env.SQL_PASS || '',
           database: body.database,
       },
-      dumpToFile: path.join(path.resolve('dump'), `${databaseWithTimestamp}.sql`),
+      dumpToFile: `./dump/${databaseWithTimestamp}.sql`,
     });
     
     if(res){
