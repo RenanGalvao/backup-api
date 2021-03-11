@@ -4,7 +4,3 @@ SQL_PORT=
 SQL_USER=
 SQL_DB=
 SQL_PASS=
-
-# APP
-HOST=localhost
-PORT=3000

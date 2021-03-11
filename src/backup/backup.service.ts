@@ -2,13 +2,17 @@ import { Injectable, Logger } from '@nestjs/common';
 import mysqldump from 'mysqldump';
 import { DumpRequest } from './interface/dump-request.interface';
 import { ResponseMessage } from '../response-message';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { Connection } from 'typeorm';
+import * as path from 'path';
 
 @Injectable()
 export class BackupServiceV1 {
   private readonly logger = new Logger(BackupServiceV1.name);
+  constructor(private connection: Connection) {}
 
   async dump(body: DumpRequest) {
-    const databaseWithTimestamp = `${new Date().toLocaleString().replace(/[\/\s]/g, '-')}-${body.fileName ?? body.database}`;
+    const databaseWithTimestamp = `${new Date().toLocaleString().replace(/[\/\s:]/g, '-')}-${body.fileName ?? body.database}`;
     const res = await mysqldump({
       connection: {
           host: process.env.SQL_HOST || 'localhost',
@@ -16,7 +20,7 @@ export class BackupServiceV1 {
           password: process.env.SQL_PASS || '',
           database: body.database,
       },
-      dumpToFile: `./dump/${databaseWithTimestamp}.sql`,   
+      dumpToFile: path.join(path.resolve('dump'), `${databaseWithTimestamp}.sql`),
     });
     
     if(res){
@@ -33,6 +37,24 @@ export class BackupServiceV1 {
         status: 400,
         data: null,
       });
+    }
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_6PM)
+  async handleCron(){
+    try{
+      // Retrieve all databases
+      const databases = await this.connection.query('SELECT schema_name FROM information_schema.schemata');
+
+      // databases[0] = information schema
+      for(let i = 1; i < databases.length; i++){
+        await this.dump({database: databases[i].schema_name});
+      }
+    }catch{
+      // retries after 1 minute
+      setTimeout(() => {
+        this.handleCron();
+      }, 60 * 1000);
     }
   }
 }
