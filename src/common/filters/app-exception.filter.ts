@@ -5,8 +5,8 @@ import {
   HttpException,
   HttpStatus, 
   BadRequestException } from '@nestjs/common';
-import { DumpValidation } from './backup/interface/dump-validation.interface';
-import { ResponseMessage } from './response-message';
+import { DumpValidation } from '../../backup/interface/dump-validation.interface';
+import { ResponseMessage } from '../messages/response-message';
 
 @Catch()
 export class AppExceptionFilter implements ExceptionFilter {
