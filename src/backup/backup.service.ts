@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import mysqldump from 'mysqldump';
 import { DumpRequest } from './interface/dump-request.interface';
-import { ResponseMessage } from '../response-message';
+import { ResponseMessage } from '../common/messages/response-message';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Connection } from 'typeorm';
+import { fileNameTimestamp } from '../common/helpers'; 
 
 @Injectable()
 export class BackupServiceV1 {
@@ -11,7 +12,7 @@ export class BackupServiceV1 {
   constructor(private connection: Connection) {}
 
   async dump(body: DumpRequest) {
-    const databaseWithTimestamp = `${new Date().toLocaleString().replace(/[\/\s:]/g, '-')}-${body.fileName ?? body.database}`;
+    const fileName = fileNameTimestamp(body.fileName ?? body.database);
     const res = await mysqldump({
       connection: {
           host: process.env.SQL_HOST || 'localhost',
@@ -19,13 +20,13 @@ export class BackupServiceV1 {
           password: process.env.SQL_PASS || '',
           database: body.database,
       },
-      dumpToFile: `./dump/${databaseWithTimestamp}.sql`,
+      dumpToFile: `./dump/${fileName}`,
     });
     
     if(res){
-      this.logger.log(`Database ${databaseWithTimestamp} saved in ./dump.`);
+      this.logger.log(`Database ${fileName} saved in ./dump.`);
       return new ResponseMessage({
-        message: `Database ${ body.fileName ??  body.database} saved.`,
+        message: `Database ${ body.fileName ?? body.database} saved.`,
         status: 201,
         data: res,
       });
@@ -42,15 +43,16 @@ export class BackupServiceV1 {
   @Cron(CronExpression.EVERY_DAY_AT_6PM)
   async handleCron(){
     try{
-      // Retrieve all databases
-      const databases = await this.connection.query('SELECT schema_name FROM information_schema.schemata');
+      const databases = await this.connection.query(`
+        SELECT schema_name 
+        FROM information_schema.schemata  
+        WHERE schema_name 
+        NOT IN('information_schema', 'mysql', 'performance_schema')`);
 
-      // databases[0] = information schema
-      for(let i = 1; i < databases.length; i++){
+      for(let i = 0; i < databases.length; i++){
         await this.dump({database: databases[i].schema_name});
       }
     }catch{
-      // retries after 1 minute
       setTimeout(() => {
         this.handleCron();
       }, 60 * 1000);

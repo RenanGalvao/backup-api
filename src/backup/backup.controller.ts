@@ -1,7 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { BackupServiceV1 } from './backup.service';
 import { CreateDumpDto } from './dto/create-dump.dto';
-import { ValidationPipe } from '../validation.pipe';
+import { ValidationPipe } from '../common/pipes/validation.pipe';
 import { ApiTags, ApiOperation, } from '@nestjs/swagger';
 
 @ApiTags('v1')
