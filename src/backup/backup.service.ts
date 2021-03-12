@@ -40,7 +40,7 @@ export class BackupServiceV1 {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_DAY_AT_6PM)
   async handleCron(){
     try{
       const databases = await this.connection.query(`

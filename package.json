@@ -1,6 +1,6 @@
 {
   "name": "backup-api",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Backups mysql database up",
   "author": "Renan Galvão",
   "private": true,
