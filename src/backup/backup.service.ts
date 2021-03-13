@@ -20,11 +20,11 @@ export class BackupServiceV1 {
           password: process.env.SQL_PASS || '',
           database: body.database,
       },
-      dumpToFile: `./dump/${fileName}`,
+      dumpToFile: `/opt/backup/${fileName}`,
     });
     
     if(res){
-      this.logger.log(`Database ${fileName} saved in ./dump.`);
+      this.logger.log(`Database ${fileName} saved in ./opt/backup.`);
       await this.connection.query(`INSERT INTO log_backup (\`database\`, \`data\`) VALUES('${fileName}', NOW());`);
       return new ResponseMessage({
         message: `Database ${ body.fileName ?? body.database} saved.`,
