@@ -4,7 +4,7 @@ import { DumpRequest } from './interface/dump-request.interface';
 import { ResponseMessage } from '../common/messages/response-message';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Connection } from 'typeorm';
-import { fileNameTimestamp } from '../common/helpers'; 
+import { fileNameTimestamp } from '../common/helpers';
 
 @Injectable()
 export class BackupServiceV1 {
@@ -25,6 +25,7 @@ export class BackupServiceV1 {
     
     if(res){
       this.logger.log(`Database ${fileName} saved in ./dump.`);
+      await this.connection.query(`INSERT INTO log_backup (\`database\`, \`data\`) VALUES('${fileName}', NOW());`);
       return new ResponseMessage({
         message: `Database ${ body.fileName ?? body.database} saved.`,
         status: 201,
