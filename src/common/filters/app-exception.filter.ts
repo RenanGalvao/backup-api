@@ -7,12 +7,16 @@ import {
   BadRequestException } from '@nestjs/common';
 import { DumpValidation } from '../../backup/interface/dump-validation.interface';
 import { ResponseMessage } from '../messages/response-message';
+import { Request, Response } from 'express';
+import { removeBadDump } from '../helpers'; 
+import { DumpRequest } from '../../backup/interface/dump-request.interface';
 
 @Catch()
 export class AppExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse();
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request<{}, {}, DumpRequest>>();
     const status =
       exception instanceof Error
         ? HttpStatus.BAD_REQUEST
@@ -36,7 +40,10 @@ export class AppExceptionFilter implements ExceptionFilter {
       });
       return
     }
-    
+    else if(exception instanceof Error && exception.message.includes('denied')){
+      removeBadDump(request.body.fileName ?? request.body.database);
+    }
+
     const responseMessage = new ResponseMessage({
       message: exception.message,
       data: null,
